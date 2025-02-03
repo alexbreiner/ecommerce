@@ -15,7 +15,6 @@ import java.util.List;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Integer id;
     private String username;
     private String firstName;
@@ -28,6 +27,6 @@ public class UserEntity {
     private UserType userType;
     private LocalDateTime dateCreated;
 
-//    @OneToMany
-//    private List<ProductEntity> productEntity;
+    @OneToMany
+    private List<ProductEntity> productEntity;
 }

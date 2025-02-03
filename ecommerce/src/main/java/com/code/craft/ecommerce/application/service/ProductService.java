@@ -3,6 +3,9 @@ package com.code.craft.ecommerce.application.service;
 import com.code.craft.ecommerce.application.repository.ProductRepository;
 import com.code.craft.ecommerce.domain.Product;
 import com.code.craft.ecommerce.domain.User;
+
+import java.time.LocalDateTime;
+
 //caso de uso
 public class ProductService {
 
@@ -25,7 +28,24 @@ public class ProductService {
     }
 
     public Product saveProduct(Product product) {
+        if (product.getId() == null) {
+            User user = new User();
+            user.setId(1);
+            product.setDateCreated(LocalDateTime.now());
+            product.setDateUpdated(LocalDateTime.now());
+            product.setUser(user);
+            return productRepository.saveProduct(product);
+        }
+
+        Product productToUpdate = productRepository.getProductById(product.getId());
+
+        product.setCode(productToUpdate.getCode());
+        product.setUser(productToUpdate.getUser());
+        product.setDateCreated(productToUpdate.getDateCreated());
+        product.setDateUpdated(LocalDateTime.now());
+
         return productRepository.saveProduct(product);
+
     }
 
     public void deleteProductById(Integer id) {
