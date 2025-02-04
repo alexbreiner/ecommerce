@@ -26,11 +26,9 @@ public class ProductController {
     }
 
     @PostMapping("/save-product")
-    public String seveProduct(Product product,
-                              @RequestParam("img") MultipartFile multipartFile) throws Exception {
+    public String seveProduct(Product product, @RequestParam("img") MultipartFile multipartFile) throws Exception {
         log.info("Nombre de producto: {}", product);
         productService.saveProduct(product, multipartFile);
-        //return "admin/products/create";
         return "redirect:/admin";
     }
 

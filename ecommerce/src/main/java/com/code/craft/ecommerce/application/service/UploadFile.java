@@ -15,17 +15,28 @@ public class UploadFile {
 
     public String upload(MultipartFile multipartFile) throws IOException {
         if (!multipartFile.isEmpty()) {
-            byte[] bytes = multipartFile.getBytes();
-            Path path = Paths.get(FOLDER + multipartFile.getOriginalFilename());
-            Files.write(path, bytes);
-            return multipartFile.getOriginalFilename();
+            // Verificar si la carpeta exitiste, sino crearla
+            File directory = new File(FOLDER);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            try {
+                byte[] bytes = multipartFile.getBytes();
+                Path path = Paths.get(FOLDER + multipartFile.getOriginalFilename());
+                Files.write(path, bytes);
+                return multipartFile.getOriginalFilename();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new IOException("El archivo o directorio especificado no existe: " + e.getMessage());
+            }
         }
         return IMG_DEFAULT;
     }
 
     public void delete(String fileName) {
         File file = new File(FOLDER + fileName);
-        file.delete();
+        if (file.exists()) file.delete();
     }
 
 }
