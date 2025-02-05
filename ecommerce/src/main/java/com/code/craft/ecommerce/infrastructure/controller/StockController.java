@@ -1,14 +1,14 @@
 package com.code.craft.ecommerce.infrastructure.controller;
 
 import com.code.craft.ecommerce.application.service.StockService;
+import com.code.craft.ecommerce.application.service.ValidateStock;
 import com.code.craft.ecommerce.domain.Product;
 import com.code.craft.ecommerce.domain.Stock;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -16,9 +16,12 @@ import java.util.List;
 public class StockController {
 
     private final StockService stockService;
+    private final ValidateStock validateStock;
 
-    public StockController(StockService stockService) {
+    public StockController(StockService stockService,
+                           ValidateStock validateStock) {
         this.stockService = stockService;
+        this.validateStock = validateStock;
     }
 
     @GetMapping("/{id}")
@@ -37,4 +40,20 @@ public class StockController {
         return "admin/stock/create";
     }
 
+    @PostMapping("/save-unit-product")
+    public String save(Stock stock, @RequestParam("idProduct") Integer idProduct) {
+        stock.setDateCreated(LocalDateTime.now());
+        stock.setDescription("Inventario");
+
+        Product product = new Product();
+        product.setId(idProduct);
+        stock.setProduct(product);
+        stockService.saveStock(validateStock.calculateBalance(stock));
+
+        return "redirect:/admin/products/show";
+    }
+
 }
+
+
+
