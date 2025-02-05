@@ -1,11 +1,10 @@
 package com.code.craft.ecommerce.infrastructure.configuration;
 
+import com.code.craft.ecommerce.application.repository.OrderProductRepository;
+import com.code.craft.ecommerce.application.repository.OrderRepository;
 import com.code.craft.ecommerce.application.repository.ProductRepository;
 import com.code.craft.ecommerce.application.repository.StockRepository;
-import com.code.craft.ecommerce.application.service.ProductService;
-import com.code.craft.ecommerce.application.service.StockService;
-import com.code.craft.ecommerce.application.service.UploadFile;
-import com.code.craft.ecommerce.application.service.ValidateStock;
+import com.code.craft.ecommerce.application.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,6 +30,16 @@ public class BeanConfiguration {
     @Bean
     public ValidateStock validateStock(StockService stockService) {
         return new ValidateStock(stockService);
+    }
+
+    @Bean
+    public OrderService orderService(OrderRepository orderRepository) {
+        return new OrderService(orderRepository);
+    }
+
+    @Bean
+    public OrderProductService orderProductService(OrderProductRepository orderProductRepository) {
+        return new OrderProductService(orderProductRepository);
     }
 
 }
