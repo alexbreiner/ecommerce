@@ -7,6 +7,9 @@ import com.code.craft.ecommerce.application.repository.StockRepository;
 import com.code.craft.ecommerce.application.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.web.context.WebApplicationContext;
 
 @Configuration
 public class BeanConfiguration {
@@ -40,6 +43,13 @@ public class BeanConfiguration {
     @Bean
     public OrderProductService orderProductService(OrderProductRepository orderProductRepository) {
         return new OrderProductService(orderProductRepository);
+    }
+
+    //cambiar el scope
+    @Bean
+    @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public CartService CartService() {
+        return new CartService();
     }
 
 }
