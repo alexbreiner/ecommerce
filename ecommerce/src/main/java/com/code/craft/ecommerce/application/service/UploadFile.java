@@ -12,15 +12,17 @@ public class UploadFile {
 
     private final String FOLDER = "images//";
     private final String IMG_DEFAULT = "default.jpg";
+    private final File directory;
+
+    public UploadFile() {
+        this.directory = new File(FOLDER);
+    }
 
     public String upload(MultipartFile multipartFile) throws IOException {
         if (!multipartFile.isEmpty()) {
-            // Verificar si la carpeta exitiste, sino crearla
-            File directory = new File(FOLDER);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
+            String currentDir = System.getProperty("user.dir");
+            String folderPath = currentDir.concat(File.separator).concat(FOLDER);
+            createFolder(folderPath);
             try {
                 byte[] bytes = multipartFile.getBytes();
                 Path path = Paths.get(FOLDER + multipartFile.getOriginalFilename());
@@ -32,6 +34,12 @@ public class UploadFile {
             }
         }
         return IMG_DEFAULT;
+    }
+
+    private void createFolder(String folderPath) {
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
     }
 
     public void delete(String fileName) {
