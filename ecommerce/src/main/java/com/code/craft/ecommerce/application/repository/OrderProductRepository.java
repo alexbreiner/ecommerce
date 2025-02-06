@@ -6,7 +6,7 @@ import com.code.craft.ecommerce.domain.OrderProduct;
 import java.util.List;
 
 public interface OrderProductRepository {
-    OrderProduct create(OrderProduct orderProduct);
-    Iterable<OrderProduct> getOrderProducts();
-    List<OrderProduct> getOrderProductsByOrder(Order order);
+    public OrderProduct create(OrderProduct orderProduct);
+    public Iterable<OrderProduct> getOrderProducts();
+    public List<OrderProduct> getOrderProductsByOrder(Order order);
 }

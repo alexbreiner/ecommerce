@@ -13,15 +13,15 @@ public class OrderProductService {
         this.orderProductRepository = orderProductRepository;
     }
 
-    OrderProduct create(OrderProduct orderProduct) {
+    public OrderProduct create(OrderProduct orderProduct) {
         return orderProductRepository.create(orderProduct);
     }
 
-    Iterable<OrderProduct> getOrderProducts() {
+    public Iterable<OrderProduct> getOrderProducts() {
         return orderProductRepository.getOrderProducts();
     }
 
-    List<OrderProduct> getOrderProductsByOrder(Order order) {
+    public List<OrderProduct> getOrderProductsByOrder(Order order) {
         return orderProductRepository.getOrderProductsByOrder(order);
     }
 
