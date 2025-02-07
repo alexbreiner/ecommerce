@@ -1,6 +1,8 @@
 package com.code.craft.ecommerce.infrastructure.configuration;
 
+import com.code.craft.ecommerce.infrastructure.service.LoginHandler;
 import com.code.craft.ecommerce.infrastructure.service.UserDetailServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -13,6 +15,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
     private final UserDetailServiceImpl userDetailService;
+
+    @Autowired
+    private LoginHandler loginHandler;
 
     public SecurityConfig(UserDetailServiceImpl userDetailService) {
         this.userDetailService = userDetailService;
@@ -34,7 +39,7 @@ public class SecurityConfig {
                   .authorizeHttpRequests(authReqConfig -> authReqConfig
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER").anyRequest().permitAll())
-                  .formLogin(login -> login.loginPage("/login").defaultSuccessUrl("/login/access"))
+                  .formLogin(login -> login.loginPage("/login").successHandler(loginHandler))
                   .logout(logout -> logout.logoutSuccessUrl("/close"))
                   .build();
     }
