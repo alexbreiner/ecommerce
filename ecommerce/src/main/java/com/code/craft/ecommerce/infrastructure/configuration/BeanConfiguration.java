@@ -1,14 +1,12 @@
 package com.code.craft.ecommerce.infrastructure.configuration;
 
-import com.code.craft.ecommerce.application.repository.OrderProductRepository;
-import com.code.craft.ecommerce.application.repository.OrderRepository;
-import com.code.craft.ecommerce.application.repository.ProductRepository;
-import com.code.craft.ecommerce.application.repository.StockRepository;
+import com.code.craft.ecommerce.application.repository.*;
 import com.code.craft.ecommerce.application.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.WebApplicationContext;
 
 @Configuration
@@ -45,11 +43,31 @@ public class BeanConfiguration {
         return new OrderProductService(orderProductRepository);
     }
 
-    //cambiar el scope
+    //Cambiar el scope
     @Bean
     @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public CartService CartService() {
         return new CartService();
+    }
+
+    @Bean
+    public UserService userService(UserRepository userRepository) {
+        return new UserService(userRepository);
+    }
+
+    @Bean
+    public RegistrationService registrationService(UserService userService, PasswordEncoder passwordEncoder) {
+        return new RegistrationService(userService, passwordEncoder);
+    }
+
+    @Bean
+    public LoginService loginService(UserService userService) {
+        return new LoginService(userService);
+    }
+
+    @Bean
+    public LoguotService loguotService() {
+        return new LoguotService();
     }
 
 }

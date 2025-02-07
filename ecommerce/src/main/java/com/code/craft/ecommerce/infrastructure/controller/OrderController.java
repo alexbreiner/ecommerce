@@ -2,12 +2,13 @@ package com.code.craft.ecommerce.infrastructure.controller;
 
 import com.code.craft.ecommerce.application.service.*;
 import com.code.craft.ecommerce.domain.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ import java.util.List;
 @RequestMapping("/user/order")
 @Slf4j
 public class OrderController {
+    private static final Integer UNIT_IN = 0;
+    public static final String VANTA = "vanta";
+    public static final String ID_USER_SESION = "idUser";
 
     private final CartService cartService;
     private final UserService userService;
@@ -44,21 +48,22 @@ public class OrderController {
 
 
     @GetMapping("/sumary-order")
-    public String showSumaryOrder(Model model) {
-        User user = userService.findById(1);
-
+    public String showSumaryOrder(Model model, HttpSession httpSession) {
+        log.info("Create summary order..");
+        log.info("Id user desde la variable de session: {}", httpSession.getAttribute(ID_USER_SESION).toString());
+        User user = userService.findById(Integer.parseInt(httpSession.getAttribute(ID_USER_SESION).toString()));
         model.addAttribute("cart", cartService.getItemCarts());
         model.addAttribute("total", cartService.getTotalPriceCart());
         model.addAttribute("user", user);
-
+        model.addAttribute("id", httpSession.getAttribute("idUser").toString());
         return "user/sumaryorder";
     }
 
     @GetMapping("/create-order")
-    public String createOrder() {
+    public String createOrder(HttpSession httpSession, RedirectAttributes attributes) {
         log.info("Create order..");
-        //obtener el user temporal
-        User user = userService.findById(1);
+        log.info("Id user desde la variable de session: {}", httpSession.getAttribute(ID_USER_SESION).toString());
+        User user = userService.findById(Integer.parseInt(httpSession.getAttribute(ID_USER_SESION).toString()));
 
         //crear order
         Order order = new Order();
@@ -80,7 +85,6 @@ public class OrderController {
                             order
                     ));
         }
-
         //save
         orderProducts.forEach(
                 orderProduct -> {
@@ -88,15 +92,15 @@ public class OrderController {
                     Stock stock = new Stock();
                     stock.setDateCreated(LocalDateTime.now());
                     stock.setProduct(orderProduct.getProduct());
-                    stock.setDescription("vanta");
-                    stock.setUnitIn(0);
+                    stock.setDescription(VANTA);
+                    stock.setUnitIn(UNIT_IN);
                     stock.setUnitOut(orderProduct.getQuantity());
                     stockService.saveStock(validateStock.calculateBalance(stock));
                 }
         );
-
+        //vacia el carrito de compra
         cartService.removeAllItemsCart();
-
+        attributes.addFlashAttribute("id", httpSession.getAttribute("idUser").toString());
         return "redirect:/home";
     }
 
